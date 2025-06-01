@@ -5,4 +5,4 @@ I think it's been my idea, I haven't seen it anywhere else. I'm a 15 yrs old Arg
 
 It's purpouse it to be fully controlable with the keyboard, and to be fast to load, upload, download anything you should do to be fast, light and simple.
 
-If anyoune ever PR's here, pleas specify on plain text what have you done, remember i got nearly no knowledge about programming, as I stablished a couple lines before
+If anyoune ever PR's here, please specify on plain text what have you done, remember i got nearly no knowledge about programming, as I stablished a couple lines before
