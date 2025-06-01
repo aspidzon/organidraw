@@ -1,0 +1,309 @@
+/* Define CSS variables for colors (from Step 23, updated by you) */
+:root {
+    --background-color: #FFFDFD;
+    --text-color: #444746;
+    --box-background: #fff;
+    --box-border: #ccc;
+    --box-shadow: rgba(0, 0, 0, 0.2);
+    --line-color: #000;
+    --control-background: #f4f4f4;
+    --button-background: #4CAF50;
+    --button-text: white;
+    --button-hover-background: #45a049;
+    --focused-box-border: dodgerblue;
+    --key-background: #e0e0e0; /* Added a specific background for keys if desired, or use --box-background */
+    --key-border: #b0b0b0; /* Added a specific border for keys */
+    --key-shadow: rgba(0, 0, 0, 0.1); /* Added a specific shadow for keys */
+}
+
+/* Dark mode variables (from Step 23, updated by you) */
+body.dark-mode {
+    --background-color: #303030;
+    --text-color: #f4f4f4;
+    --box-background: #555;
+    --box-border: #666;
+    --box-shadow: rgba(255, 255, 255, 0.2); /* Adjusted shadow for visibility in dark mode */
+    --line-color: #ccc;
+    --control-background: #363946;
+    --button-background: #696773;
+    --button-text: #f4f4f4;
+    --button-hover-background: #819595;
+    --focused-box-border: lightblue;
+    --key-background: #696773; /* Dark mode key background */
+    --key-border: #707070; /* Dark mode key border */
+    --key-shadow: rgba(255, 255, 255, 0.1); /* Dark mode key shadow */
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif; /* Will be changed to SF Pro later */
+    background-color: var(--background-color);
+    color: var(--text-color);
+    overflow: auto;
+    padding-top: 70px; /* Space for controls at top */
+    padding-right: 20px; /* Standard right padding */
+    padding-bottom: 250px; /* Generous space for bottom fixed elements */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#orgChartContainer {
+    position: relative;
+    padding: 20px;
+    overflow: auto;
+    min-width: 100%;
+    min-height: 100vh;
+    box-sizing: content-box;
+}
+
+#orgChartSVG {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Style for the SVG lines (from Step 11, updated in Step 23) */
+#orgChartSVG line {
+    stroke: var(--line-color);
+    transition: stroke 0.3s ease;
+}
+
+/* Style for the arrowhead marker (from Step 31) */
+#arrowhead polygon {
+    fill: var(--line-color); /* Use line color variable for arrowhead fill */
+    transition: fill 0.3s ease; /* Smooth transition for color change */
+}
+
+
+.org-chart-box {
+    width: 150px;
+    height: 50px;
+    padding: 10px;
+    border: 1px solid var(--box-border);
+    border-radius: 12.5px;
+    box-shadow: 2px 2px 5px var(--box-shadow);
+    resize: none;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    outline: none;
+    background-color: var(--box-background);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+    font-family: sans-serif;
+}
+
+.org-chart-box:focus {
+    border-color: var(--focused-box-border);
+}
+
+#controls {
+    position: fixed; /* Fixed position (from Step 21) */
+    top: 20px; /* Back to top-right */
+    right: 20px;
+    z-index: 1000;
+    background-color: var(--control-background);
+    padding: 10px;
+    border-radius: 12.5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    text-align: right;
+    transition: background-color 0.3s ease;
+    display: flex; /* Use flexbox to align buttons horizontally */
+    align-items: center;
+}
+
+#controls button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8.5px;
+    background-color: var(--button-background);
+    color: var(--button-text);
+    margin-left: 10px; /* Add space between buttons */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#controls button:hover {
+    background-color: var(--button-hover-background);
+}
+
+/* Style for the mode toggle button specifically */
+#modeToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    /* Removed margin-left/right here, rely on general button margin-left */
+}
+
+.mode-icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--text-color);
+    position: absolute;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.sun-icon {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+.moon-icon {
+    opacity: 0;
+    transform: rotate(180deg);
+}
+
+/* Dark mode icon state */
+body.dark-mode .sun-icon {
+    opacity: 0;
+    transform: rotate(-180deg);
+}
+
+body.dark-mode .moon-icon {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+/* Shortcut Map (from Step 34) */
+#shortcutMap {
+    position: fixed;
+    bottom: 20px; /* Fixed to bottom-right edge */
+    right: 20px;
+    z-index: 999;
+    background-color: var(--control-background);
+    color: var(--text-color);
+    padding: 15px;
+    border-radius: 12.5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: left;
+    width: 280px; /* Fixed width */
+    box-sizing: border-box; /* Include padding in width */
+    display: block; /* ENSURE VISIBILITY */
+}
+
+#shortcutMap h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+#shortcutMap ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#shortcutMap li {
+    margin-bottom: 5px;
+}
+
+/* Styling for keyboard keys within shortcut map (from Step 36) */
+#shortcutMap li strong {
+    display: inline-block;
+    padding: 3px 6px;
+    margin: 0 4px 0 0;
+    background-color: var(--key-background);
+    color: var(--text-color);
+    border: 1px solid var(--key-border);
+    border-radius: 3px;
+    box-shadow: 0 1px 2px var(--key-shadow);
+    font-weight: normal;
+    font-family: monospace;
+    min-width: 15px;
+    text-align: center;
+    line-height: 1.2;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+
+/* Caution div styling (from your HTML, now positioned by JS) */
+#caution {
+    /* REMOVED: height: 60px; */ /* Let content determine height */
+    width: 280px; /* Fixed width for caution */
+    position: fixed;
+    /* bottom will be set by JavaScript dynamically */
+    right: 20px; /* Aligned with shortcutMap on the right */
+    z-index: 999;
+    background-color: var(--control-background);
+    color: var(--text-color);
+    padding: 15px;
+    border-radius: 12.5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    line-height: 1.2;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: sans-serif;
+    box-sizing: border-box; /* Crucial for consistent sizing */
+    display: block; /* ENSURE VISIBILITY */
+}
+
+/* Specific style for reset button */
+#resetButton {
+    background-color: #f44336;
+}
+
+#resetButton:hover {
+    background-color: #d32f2f;
+}
+/* ... (existing body styles) ... */
+
+/* Default desktop padding */
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    overflow: auto;
+    padding-top: 70px; /* Space for controls at top */
+    padding-right: 20px; /* Standard right padding */
+    padding-bottom: 250px; /* Generous space for bottom fixed elements */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Media Queries for Responsiveness --- */
+
+/* For screens smaller than 768px (e.g., tablets in portrait, large phones) */
+@media (max-width: 768px) {
+    body {
+        padding-top: 20px; /* Reduce top padding for controls if they become smaller/move */
+        padding-bottom: 150px; /* Adjust if bottom panels are smaller or hidden */
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Adjust box size slightly for mobile readability if desired */
+    .org-chart-box {
+        width: 120px;
+        height: 45px;
+        font-size: 13px;
+        padding: 8px;
+    }
+}
+
+/* For very small screens (e.g., mobile phones) */
+@media (max-width: 480px) {
+    body {
+        padding-top: 10px; /* Even less padding */
+        padding-bottom: 100px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .org-chart-box {
+        width: 100px;
+        height: 40px;
+        font-size: 12px;
+        padding: 6px;
+    }
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Org Chart Designer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="controls">
+        <button id="modeToggle" title="Toggle Dark/Light Mode">
+            <!-- Sun Icon SVG (from Step 23/24) -->
+            <svg class="mode-icon sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12zm0-2a4 4 0 1 1 0-8 4 4 0 0 1 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zm-9.5-6.5L3.9 10.5l-2.1-2.1 1.4-1.4 2.1 2.1 1.4-1.4-2.1-2.1-1.4 1.4zM10.5 3.9l2.1-2.1 1.4 1.4-2.1 2.1-1.4-1.4zm8.08-4.18l1.4-1.4 2.1 2.1-1.4 1.4-2.1-2.1zm-1.4 14.08l2.1 2.1 1.4-1.4-2.1-2.1-1.4 1.4zM1 13h3v-2H1v2zm19 0h3v-2h-3v2z"/></svg>
+            <!-- Moon Icon SVG (from Step 23/24) -->
+            <svg class="mode-icon moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2a1 1 0 0 1 1 1v.43a8.05 8.05 0 0 0 7.57 7.57H21a1 1 0 0 1 0 2h-.43a8.05 8.05 0 0 0-7.57 7.57V21a1 1 0 0 1-2 0v-.43a8.05 8.05 0 0 0-7.57-7.57H3a1 1 0 0 1 0-2h.43a8.05 8.05 0 0 0 7.57-7.57V3a1 1 0 0 1 1-1z"/></svg>
+        </button>
+        <!-- Removed: <button id="saveLocalButton" title="Save chart to browser's local storage">Save</button> -->
+        <button id="downloadFileButton" title="Download chart as a file">Download</button>
+        <!-- Hidden file input for loading (from Step 40) -->
+        <input type="file" id="loadFileButton" accept=".json" style="display: none;">
+        <button id="uploadFileTrigger" title="Load chart from a file">Load</button>
+        <button id="resetButton">Reset</button> <!-- Reset Button (from Step 38) -->
+        <button id="exportPdfButton">Export as PDF</button>
+    </div>
+
+    <div id="orgChartContainer">
+        <!-- SVG for drawing lines -->
+        <svg id="orgChartSVG">
+            <defs>
+                <!-- Arrowhead Marker (from Step 31) -->
+                <marker id="arrowhead" markerWidth="10" markerHeight="7"
+                        refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" /> <!-- Fill controlled by CSS -->
+                </marker>
+            </defs>
+        </svg>
+
+        <!-- Organizational chart boxes will be added here by JavaScript -->
+        <!-- The first box will be created by the script on load -->
+    </div>
+
+    <div id="caution"> This app was built entirely with AI, any <a href="https://forms.gle/mZmNVRnHNWL8kGUKA" id="feedback-link" target="_blank" rel="noopener">feedback</a> will be received gratefully </div>
+
+    <!-- Shortcut Map (from Step 33) -->
+    <div id="shortcutMap">
+        <h3>Keyboard Shortcuts</h3>
+        <ul>
+            <li><strong>Enter:</strong> Add box below</li>
+            <li><strong>Tab:</strong> Add box right</li>
+            <li><strong>Alt</strong> + <strong>E:</strong> Move/Create right</li>
+            <li><strong>Alt</strong> + <strong>Q:</strong> Move/Create left</li>
+            <li><strong>Alt</strong> + <strong>W:</strong> Move/Create above</li>
+            <li><strong>Alt</strong> + <strong>S:</strong> Move/Create below</li>
+            <li><strong>Drag Box:</strong> Move box</li>
+        </ul>
+    </div>
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Your Script File -->
+    <script src="script.js"></script>
+</body>
+</html>
