@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2166.64 786.68">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: Gerbil-Regular, Gerbil;
+        font-size: 251.35px;
+      }
+
+      .cls-2 {
+        letter-spacing: 0em;
+      }
+
+      .cls-3 {
+        letter-spacing: -.19em;
+      }
+
+      .cls-4 {
+        letter-spacing: .03em;
+      }
+    </style>
+  </defs>
+  <g id="Capa_1-2" data-name="Capa_1">
+    <g>
+      <g>
+        <path d="M1673.06,661.99c1.65-5.75,3.46-11.42,5.22-17.11,1.72-5.71,3.64-11.33,5.49-16.99l5.59-16.94,5.79-16.85c7.84-22.42,16.02-44.69,24.39-66.87,16.83-44.33,34.65-88.2,53.18-131.76,18.5-43.57,37.9-86.75,57.84-129.67,19.98-42.91,40.69-85.5,62.33-127.67l.19-.37c2.06-4.01,6.98-5.6,11-3.54,3.87,1.99,5.47,6.66,3.73,10.59l-57.77,129.71-28.91,64.84-29.15,64.74-58.3,129.47c-19.36,43.19-39.04,86.24-58.63,129.32-.25.55-.9.79-1.45.54-.5-.23-.75-.78-.6-1.3l.04-.14Z"/>
+        <polygon points="1993.19 218.2 1970.72 0 1792.96 128.54 1993.19 218.2"/>
+      </g>
+      <text class="cls-1" transform="translate(0 668.55)"><tspan x="0" y="0">ORGA</tspan><tspan class="cls-4" x="916.68" y="0">NI</tspan><tspan x="1207.23" y="0">DR</tspan><tspan class="cls-3" x="1651.37" y="0">A</tspan><tspan class="cls-2" x="1822.29" y="0">W</tspan></text>
+    </g>
+  </g>
+</svg>
