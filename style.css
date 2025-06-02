@@ -40,7 +40,7 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     overflow: auto;
-    /* Default padding for larger screens (from Step 21, updated Step 43/49) */
+    /* Default padding for larger screens */
     padding-top: 70px;     /* Space for controls at top */
     padding-left: 70px;    /* Space for isologo at left */
     padding-right: 20px;   /* Standard right padding */
@@ -52,8 +52,8 @@ body {
     position: relative;
     padding: 20px;
     overflow: auto;
-    min-width: 100%;
-    min-height: 100vh;
+    min-width: 100%; /* Ensures it takes full width initially */
+    min-height: 100vh; /* Ensures it takes full height initially */
     box-sizing: content-box;
 }
 
@@ -161,7 +161,6 @@ body.dark-mode #isologo {
     padding: 0;
     overflow: hidden;
     position: relative;
-    /* Removed margin-left/right here, rely on general button margin-left */
 }
 
 .mode-icon {
@@ -210,7 +209,7 @@ body.dark-mode .moon-icon {
     text-align: left;
     width: 280px; /* Fixed width */
     box-sizing: border-box; /* Include padding in width */
-    display: block; /* ENSURE VISIBILITY */
+    display: block; /* ENSURE VISIBILITY by default */
 }
 
 #shortcutMap h3 {
@@ -265,8 +264,19 @@ body.dark-mode .moon-icon {
     transition: background-color 0.3s ease, color 0.3s ease;
     font-family: sans-serif;
     box-sizing: border-box; /* Crucial for consistent sizing */
-    display: block; /* ENSURE VISIBILITY */
+    display: block; /* ENSURE VISIBILITY by default */
 }
+
+#caution a { /* Styling for the feedback link within caution div */
+    color: var(--text-color); /* Inherit or explicitly set text color */
+    text-decoration: underline; /* Default underline */
+    word-break: break-all; /* Allow breaking of long words to prevent overflow */
+}
+
+#caution a:hover {
+    color: dodgerblue; /* Highlight on hover */
+}
+
 
 /* Specific style for reset button */
 #resetButton {
@@ -277,18 +287,24 @@ body.dark-mode .moon-icon {
     background-color: #d32f2f;
 }
 
-/* --- Media Queries for Responsiveness (from Step 43, updated Step 49) --- */
+/* --- Media Queries for Responsiveness (from Step 43/49) --- */
+
+/* For screens smaller than 1024px (e.g., smaller laptops, large tablets) - New Breakpoint */
+@media (max-width: 1024px) {
+    .org-chart-box {
+        font-size: 13px; /* Slightly smaller font */
+    }
+}
 
 /* For screens smaller than 768px (e.g., tablets in portrait, large phones) */
 @media (max-width: 768px) {
     body {
-        padding-top: 20px; /* Reduce top padding for controls if they become smaller/move */
-        padding-left: 20px; /* Adjust padding-left for smaller screens */
+        padding-top: 20px;     /* Reduce top padding for controls */
+        padding-left: 20px;    /* Adjust padding-left for smaller screens */
         padding-right: 10px;
         padding-bottom: 150px; /* Adjust if bottom panels are smaller or hidden */
     }
 
-    /* Adjust box size slightly for mobile readability if desired */
     .org-chart-box {
         width: 120px;
         height: 45px;
@@ -297,32 +313,32 @@ body.dark-mode .moon-icon {
     }
 
     #isologo {
-        top: 10px; /* Move slightly closer to top/left on smaller screens */
+        top: 10px;
         left: 10px;
-        width: 35px; /* Slightly smaller */
+        width: 35px;
         height: 35px;
     }
 
     #controls {
-        top: 10px; /* Move slightly closer to top */
-        right: 10px; /* Move slightly closer to right */
-        padding: 5px; /* Reduce padding */
-        border-radius: 8px; /* Slightly less rounded */
+        top: 10px;
+        right: 10px;
+        padding: 5px;
+        border-radius: 8px;
     }
 
     #controls button {
-        padding: 8px 12px; /* Smaller buttons */
+        padding: 8px 12px;
         font-size: 14px;
-        margin-left: 5px; /* Less space between buttons */
+        margin-left: 5px;
     }
 
     #modeToggle {
-        width: 35px; /* Smaller toggle icon */
+        width: 35px;
         height: 35px;
     }
 
     .mode-icon {
-        width: 20px; /* Smaller SVG icon */
+        width: 20px;
         height: 20px;
     }
 
@@ -330,6 +346,14 @@ body.dark-mode .moon-icon {
     #caution {
         /* On medium screens, keep fixed width, but align better with reduced body padding */
         right: 10px; /* Align to 10px from right edge */
+        width: 250px; /* Slightly smaller width for fixed panels */
+        padding: 10px; /* Reduced padding for fixed panels */
+        font-size: 13px;
+    }
+
+    #shortcutMap h3,
+    #caution h3 {
+        font-size: 15px;
     }
 }
 
@@ -349,8 +373,8 @@ body.dark-mode .moon-icon {
 /* For very small screens (e.g., mobile phones) */
 @media (max-width: 480px) {
     body {
-        padding-top: 10px; /* Even less padding */
-        padding-left: 10px; /* Adjust padding-left */
+        padding-top: 10px;
+        padding-left: 10px;
         padding-right: 5px;
         padding-bottom: 100px; /* Re-adjust to avoid overlap if only controls are visible */
     }
@@ -363,9 +387,9 @@ body.dark-mode .moon-icon {
     }
 
     #isologo {
-        top: 5px; /* Even closer to corner */
+        top: 5px;
         left: 5px;
-        width: 30px; /* Even smaller */
+        width: 30px;
         height: 30px;
     }
 
@@ -375,7 +399,7 @@ body.dark-mode .moon-icon {
         padding: 5px 10px; /* Adjust padding for vertical stack */
         width: auto; /* Allow width to shrink */
         min-height: auto; /* Remove min-height */
-        top: 5px; /* Move closer to corner */
+        top: 5px;
         right: 5px;
     }
 
