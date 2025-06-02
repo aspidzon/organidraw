@@ -48,7 +48,11 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 .button-icon{
-    scale: 0.25;
+    width: 20px; /* ORIGINAL: 24px - Made tinier */
+    height: 20px; /* ORIGINAL: 24px - Made tinier */
+    fill: var(--button-text);
+    filter: none;
+    transition: filter 0.3s ease;
 }
 #orgChartContainer {
     position: relative;
