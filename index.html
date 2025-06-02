@@ -17,12 +17,20 @@
             <svg class="mode-icon moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2a1 1 0 0 1 1 1v.43a8.05 8.05 0 0 0 7.57 7.57H21a1 1 0 0 1 0 2h-.43a8.05 8.05 0 0 0-7.57 7.57V21a1 1 0 0 1-2 0v-.43a8.05 8.05 0 0 0-7.57-7.57H3a1 1 0 0 1 0-2h.43a8.05 8.05 0 0 0 7.57-7.57V3a1 1 0 0 1 1-1z"/></svg>
         </button>
         <!-- Removed: <button id="saveLocalButton" title="Save chart to browser's local storage">Save</button> -->
-        <button id="downloadFileButton" title="Download chart as a file">Download</button>
+        <button id="downloadFileButton" title="Download chart as a file">
+            <img class="button-icon" src="svgicons/download.svg" alt="Download Icon">
+        </button>
         <!-- Hidden file input for loading (from Step 40) -->
         <input type="file" id="loadFileButton" accept=".json" style="display: none;">
-        <button id="uploadFileTrigger" title="Load chart from a file">Load</button>
-        <button id="resetButton">Reset</button> <!-- Reset Button (from Step 38) -->
-        <button id="exportPdfButton">Export as PDF</button>
+        <button id="uploadFileTrigger" title="Load chart from a file">
+            <img class="button-icon" src="svgicons/upload.svg" alt="Upload Icon">
+        </button>
+        <button id="resetButton" title="Reset chart">
+            <img class="button-icon" src="svgicons/reset.png" alt="Reset Icon">
+        </button>
+        <button id="exportPdfButton" title="Export chart as PDF">
+            <img class="button-icon" src="svgicons/pdf-export.png" alt="PDF Icon">
+        </button>
     </div>
 
     <div id="orgChartContainer">
