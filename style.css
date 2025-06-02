@@ -47,7 +47,9 @@ body {
     padding-bottom: 250px; /* Generous space for bottom fixed elements (shortcut map, caution) */
     transition: background-color 0.3s ease, color 0.3s ease;
 }
-
+#button-icon{
+    scale: 0.25;
+}
 #orgChartContainer {
     position: relative;
     padding: 20px;
