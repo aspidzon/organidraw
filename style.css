@@ -419,6 +419,6 @@ body.dark-mode .moon-icon {
         margin: 5px 0; /* Align toggle button within stack */
     }
 }
-a{
+a {
     transition: color 0.3s ease, color 0.3s ease;
 }
