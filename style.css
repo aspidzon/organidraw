@@ -47,13 +47,7 @@ body {
     padding-bottom: 250px; /* Generous space for bottom fixed elements (shortcut map, caution) */
     transition: background-color 0.3s ease, color 0.3s ease;
 }
-.button-icon{
-    width: 20px; /* ORIGINAL: 24px - Made tinier */
-    height: 20px; /* ORIGINAL: 24px - Made tinier */
-    fill: var(--button-text);
-    filter: none;
-    transition: filter 0.3s ease;
-}
+
 #orgChartContainer {
     position: relative;
     padding: 20px;
@@ -86,18 +80,24 @@ body {
 }
 
 
-/* Isologo styling (from Step 49) */
+/* Isologo styling (from Step 49, corrected sizing) */
 #isologo {
     position: fixed;
     top: 20px;
     left: 20px;
-    width: 40px;
-    height: 40px;
-    z-index: 1000; /* Ensure it's on top, same as controls */
+    /* Set a base natural width/height for the image.
+       The scale property will then scale this.
+       Assuming your 'ORGANIDRAW' image is roughly 400px wide,
+       then scale(0.2) makes it 80px wide. Adjust base width/height as needed. */
+    width: 400px; /* Base width of the full logotype image */
+    height: auto; /* Maintain aspect ratio */
+    transform: scale(0.4); /* Apply the scaling as requested */
+    transform-origin: top left; /* Make it scale from its top-left corner */
+    z-index: 1000; /* Ensure it's on top */
     transition: filter 0.3s ease; /* Smooth transition for color inversion */
 }
 
-/* Dark mode adjustment for the isologo to make it visible on dark backgrounds */
+/* Dark mode adjustment for the isologo */
 body.dark-mode #isologo {
     filter: invert(1); /* Invert colors to make a dark logo appear light */
 }
@@ -142,14 +142,20 @@ body.dark-mode #isologo {
 }
 
 #controls button {
-    padding: 10px 20px;
-    font-size: 16px;
+    /* Adjusted padding, width/height to make it a square for the icon */
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex; /* Use flexbox to center the icon */
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Hide anything outside button bounds */
     cursor: pointer;
     border: none;
     border-radius: 8.5px;
     background-color: var(--button-background);
     color: var(--button-text);
-    margin-left: 10px; /* Add space between buttons */
+    margin-left: 10px;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -157,7 +163,21 @@ body.dark-mode #isologo {
     background-color: var(--button-hover-background);
 }
 
-/* Style for the mode toggle button specifically */
+/* Style for the button icons (PNG or SVG) (from Step 51, size updated Step 53) */
+.button-icon {
+    width: 20px; /* Made tinier as requested */
+    height: 20px; /* Made tinier as requested */
+    filter: none; /* Default: no filter. */
+    transition: filter 0.3s ease;
+}
+
+/* Dark mode adjustment for button icons (will apply to PNGs if needed, but often not ideal) */
+body.dark-mode .button-icon {
+    filter: invert(1); /* Converts black to white, preserves transparency. */
+}
+
+
+/* Style for the mode toggle button specifically (from Step 51, size updated Step 53) */
 #modeToggle {
     display: flex;
     align-items: center;
@@ -167,36 +187,44 @@ body.dark-mode #isologo {
     padding: 0;
     overflow: hidden;
     position: relative;
+    margin-right: 10px; /* Explicitly add space to its right */
 }
 
 .mode-icon {
     width: 24px;
     height: 24px;
-    fill: var(--text-color);
+    /* Removed `fill` as these are now PNG `<img>` tags */
     position: absolute;
-    transition: transform 0.5s ease, opacity 0.5s ease;
+    transition: transform 0.5s ease, opacity 0.5s ease, filter 0.3s ease;
 }
 
-.sun-icon {
+/* Light mode icon state (initially visible) */
+.light-mode-icon { /* Replaced .sun-icon */
     opacity: 1;
     transform: rotate(0deg);
+    filter: none; /* No filter for default light mode display */
 }
 
-.moon-icon {
+/* Dark mode icon state (initially hidden) */
+.dark-mode-icon { /* Replaced .moon-icon */
     opacity: 0;
     transform: rotate(180deg);
+    filter: invert(1); /* Assume dark icon that needs to be inverted for light background if initially dark */
 }
 
-/* Dark mode icon state */
-body.dark-mode .sun-icon {
-    opacity: 0;
-    transform: rotate(-180deg);
+/* Dark mode behavior for mode icons */
+body.dark-mode .light-mode-icon {
+    opacity: 0; /* Hide light mode icon */
+    transform: rotate(-180deg); /* Rotate out */
+    filter: none; /* Reset filter when hidden or moving out */
 }
 
-body.dark-mode .moon-icon {
-    opacity: 1;
-    transform: rotate(0deg);
+body.dark-mode .dark-mode-icon {
+    opacity: 1; /* Show dark mode icon */
+    transform: rotate(0deg); /* Rotate in */
+    filter: none; /* No filter for dark mode display if the icon is already light */
 }
+
 
 /* Shortcut Map (from Step 34) */
 #shortcutMap {
@@ -272,14 +300,34 @@ body.dark-mode .moon-icon {
     box-sizing: border-box; /* Crucial for consistent sizing */
     display: block; /* ENSURE VISIBILITY by default */
 }
+/* New caution2 div styling - make it look like other caution boxes */
+#caution2 {
+    width: 280px; /* Fixed width (matches shortcut map for alignment) */
+    position: fixed;
+    /* bottom will be set by JavaScript dynamically */
+    right: 20px; /* Aligned with shortcutMap on the right */
+    z-index: 999;
+    background-color: var(--control-background);
+    color: var(--text-color);
+    padding: 15px;
+    border-radius: 12.5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    line-height: 1.2;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: sans-serif;
+    box-sizing: border-box; /* Crucial for consistent sizing */
+    display: block; /* ENSURE VISIBILITY by default */
+}
 
-#caution a { /* Styling for the feedback link within caution div */
+#caution a, #caution2 a { /* Styling for the feedback link within caution div (apply to both) */
     color: var(--text-color); /* Inherit or explicitly set text color */
     text-decoration: underline; /* Default underline */
     word-break: break-all; /* Allow breaking of long words to prevent overflow */
+    transition: color 0.3s ease; /* Ensure link color transitions with theme */
 }
 
-#caution a:hover {
+#caution a:hover, #caution2 a:hover {
     color: dodgerblue; /* Highlight on hover */
 }
 
@@ -299,6 +347,11 @@ body.dark-mode .moon-icon {
 @media (max-width: 1024px) {
     .org-chart-box {
         font-size: 13px; /* Slightly smaller font */
+    }
+
+    #isologo {
+        width: 300px; /* Reduce base width for scaling */
+        transform: scale(0.2); /* Keep scale factor */
     }
 }
 
@@ -321,8 +374,8 @@ body.dark-mode .moon-icon {
     #isologo {
         top: 10px;
         left: 10px;
-        width: 35px;
-        height: 35px;
+        width: 250px; /* Further reduce base width for scaling */
+        transform: scale(0.2); /* Keep scale factor */
     }
 
     #controls {
@@ -333,14 +386,23 @@ body.dark-mode .moon-icon {
     }
 
     #controls button {
-        padding: 8px 12px;
-        font-size: 14px;
+        width: 35px; /* Consistent size for buttons */
+        height: 35px;
+        padding: 0; /* No padding on buttons with icons */
+        font-size: 14px; /* Default for text, but icons are primary */
         margin-left: 5px;
+    }
+
+    /* Icon sizes within smaller buttons */
+    .button-icon {
+        width: 18px; /* Tinier as requested */
+        height: 18px;
     }
 
     #modeToggle {
         width: 35px;
         height: 35px;
+        margin-right: 5px; /* Adjust margin */
     }
 
     .mode-icon {
@@ -349,16 +411,17 @@ body.dark-mode .moon-icon {
     }
 
     #shortcutMap,
-    #caution {
-        /* On medium screens, keep fixed width, but align better with reduced body padding */
-        right: 10px; /* Align to 10px from right edge */
-        width: 250px; /* Slightly smaller width for fixed panels */
-        padding: 10px; /* Reduced padding for fixed panels */
+    #caution,
+    #caution2 { /* Include new caution2 div in responsive hiding */
+        right: 10px;
+        width: 250px;
+        padding: 10px;
         font-size: 13px;
     }
 
     #shortcutMap h3,
-    #caution h3 {
+    #caution h3,
+    #caution2 h3 { /* Apply to all headings in these divs */
         font-size: 15px;
     }
 }
@@ -366,13 +429,13 @@ body.dark-mode .moon-icon {
 /* Hide shortcut map and caution on smaller screens (mobile) */
 @media (max-width: 600px) {
     #shortcutMap,
-    #caution {
-        display: none; /* Hide these divs completely */
+    #caution,
+    #caution2 { /* All three hidden */
+        display: none;
     }
 
-    /* Adjust body padding if elements are hidden */
     body {
-        padding-bottom: 20px; /* Minimal bottom padding if panels are hidden */
+        padding-bottom: 20px;
     }
 }
 
@@ -382,7 +445,7 @@ body.dark-mode .moon-icon {
         padding-top: 10px;
         padding-left: 10px;
         padding-right: 5px;
-        padding-bottom: 100px; /* Re-adjust to avoid overlap if only controls are visible */
+        padding-bottom: 100px;
     }
 
     .org-chart-box {
@@ -395,30 +458,36 @@ body.dark-mode .moon-icon {
     #isologo {
         top: 5px;
         left: 5px;
-        width: 30px;
-        height: 30px;
+        width: 200px; /* Further reduce base width for scaling */
+        transform: scale(0.2);
     }
 
     #controls {
-        flex-direction: column; /* Stack buttons vertically */
-        align-items: flex-end; /* Align stacked buttons to the right */
-        padding: 5px 10px; /* Adjust padding for vertical stack */
-        width: auto; /* Allow width to shrink */
-        min-height: auto; /* Remove min-height */
+        flex-direction: column;
+        align-items: flex-end;
+        padding: 5px 10px;
+        width: auto;
+        min-height: auto;
         top: 5px;
         right: 5px;
     }
 
     #controls button {
-        margin: 5px 0; /* Add vertical margin, remove horizontal */
-        width: 100%; /* Make buttons full width in stack */
-        text-align: center; /* Center text in stacked buttons */
+        width: 100%;
+        height: 35px;
+        margin: 5px 0;
+        padding: 0;
+        font-size: 14px;
+    }
+
+    .button-icon {
+        width: 20px;
+        height: 20px;
     }
 
     #modeToggle {
-        margin: 5px 0; /* Align toggle button within stack */
+        width: 100%;
+        height: 35px;
+        margin: 5px 0;
     }
-}
-a {
-    transition: color 0.3s ease, color 0.3s ease;
 }

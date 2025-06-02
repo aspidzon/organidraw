@@ -18,6 +18,7 @@ let initialBoxY;
 // Get references to fixed elements for positioning (from Step 42)
 const shortcutMap = document.getElementById('shortcutMap');
 const cautionDiv = document.getElementById('caution');
+const caution2Div = document.getElementById('caution2'); // Get the new caution2 div
 
 
 // Function to create a new textbox element (for subsequent boxes: Enter, Tab, Alt+Keys)
@@ -361,7 +362,6 @@ function handleBoxClick(event) {
     let targetBox = event.target.closest('.org-chart-box');
     if (targetBox) {
         targetBox.focus();
-        // The focusin event listener will then update activeBox.
     }
 }
 
@@ -495,7 +495,7 @@ function renderChartFromData(data) {
         box.classList.add('org-chart-box');
         box.placeholder = 'Enter text here...';
         box.style.position = 'absolute';
-        box.id = nodeData.id; // Assign the saved ID
+        box.id = nodeData.id;
         box.value = nodeData.text || '';
 
         orgChartContainer.appendChild(box);
@@ -542,6 +542,41 @@ function resetCanvas(requireConfirmation = true) {
 }
 
 
+// --- DELETE BOX FUNCTIONALITY (NEW - from Step 55) ---
+function deleteBox(boxToDelete) {
+    if (!boxToDelete) return;
+
+    const confirmDelete = confirm("Are you sure you want to delete this box and all its connections? This action cannot be undone.");
+    if (!confirmDelete) {
+        return; // User cancelled
+    }
+
+    const boxIdToDelete = boxToDelete.id;
+
+    // 1. Remove the box from the DOM
+    boxToDelete.remove();
+
+    // 2. Remove all lines connected to or from this box
+    const linesToDelete = orgChartSVG.querySelectorAll(`line[data-from="${boxIdToDelete}"], line[data-to="${boxIdToDelete}"]`);
+    linesToDelete.forEach(line => line.remove());
+
+    // 3. Update activeBox state
+    activeBox = null; // No box is currently active
+
+    // 4. Resize the container
+    resizeContainer();
+
+    // 5. If no boxes left, create initial box, otherwise focus the first remaining one
+    const remainingBoxes = orgChartContainer.querySelectorAll('.org-chart-box');
+    if (remainingBoxes.length === 0) {
+        createInitialBox(); // This will also handle focusing and title update
+    } else {
+        remainingBoxes[0].focus(); // Focus the first remaining box
+        updateDocumentTitle(); // Update title if first box changed
+    }
+}
+
+
 // --- Initial Load Setup ---
 window.addEventListener('load', () => {
     const savedMode = localStorage.getItem('mode');
@@ -573,7 +608,7 @@ orgChartContainer.addEventListener('focusout', (event) => {
             }
         }, 10);
     }
-}); // <--- THIS WAS THE MISSING CLOSING CURLY BRACE!
+});
 
 // Function to handle key presses
 function handleKeyPress(event) {
@@ -703,6 +738,11 @@ function handleKeyPress(event) {
             if (activeBox) {
                 createBox(activeBox.id, 'right');
             }
+        } else if (event.ctrlKey && event.key === 'Backspace') { // Ctrl + Backspace key to delete
+            event.preventDefault();
+            if (activeBox) {
+                deleteBox(activeBox);
+            }
         }
     } else {
          if (event.altKey && (event.key === 's' || event.key === 'S')) {
@@ -722,14 +762,16 @@ document.addEventListener('keydown', handleKeyPress);
 
 // Function to update the positions of fixed bottom-right panels
 function updateFixedPanelPositions() {
-    if (!shortcutMap || !cautionDiv) {
+    if (!shortcutMap || !cautionDiv || !caution2Div) { // Ensure all elements exist
         console.warn("Fixed panels not found, skipping position update.");
         return;
     }
 
     const shortcutMapComputedStyle = window.getComputedStyle(shortcutMap);
     const cautionDivComputedStyle = window.getComputedStyle(cautionDiv);
+    const caution2DivComputedStyle = window.getComputedStyle(caution2Div); // Get computed style for caution2
 
+    // Position shortcutMap if visible
     if (shortcutMapComputedStyle.display !== 'none') {
         shortcutMap.style.bottom = '20px';
         shortcutMap.style.right = '20px';
@@ -738,6 +780,7 @@ function updateFixedPanelPositions() {
         shortcutMap.style.display = 'none';
     }
 
+    // Position caution div (the first one) above shortcutMap if both are visible
     if (cautionDivComputedStyle.display !== 'none') {
         const spacing = 20;
         const shortcutMapHeight = (shortcutMapComputedStyle.display !== 'none') ? shortcutMap.offsetHeight : 0;
@@ -747,5 +790,18 @@ function updateFixedPanelPositions() {
         cautionDiv.style.display = 'block';
     } else {
         cautionDiv.style.display = 'none';
+    }
+
+    // Position caution2 div above caution (the first one) if both are visible
+    if (caution2DivComputedStyle.display !== 'none') {
+        const spacing = 20;
+        const cautionHeight = (cautionDivComputedStyle.display !== 'none') ? cautionDiv.offsetHeight : 0;
+        const cautionBottomPos = (cautionDivComputedStyle.display !== 'none') ? parseFloat(cautionDiv.style.bottom) || 0 : 20; // If caution is hidden, stack on bottom 20px
+        
+        caution2Div.style.bottom = (cautionBottomPos + cautionHeight + spacing) + 'px';
+        caution2Div.style.right = '20px';
+        caution2Div.style.display = 'block';
+    } else {
+        caution2Div.style.display = 'none';
     }
 }
