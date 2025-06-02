@@ -20,9 +20,7 @@ const shortcutMap = document.getElementById('shortcutMap');
 const cautionDiv = document.getElementById('caution');
 
 
-// Function to create a new textbox element
-// This function is primarily for creating *new* boxes based on user input (Enter, Tab, Alt+Keys)
-// It expects a parentId and position to determine where to place the new box and draw a line.
+// Function to create a new textbox element (for subsequent boxes: Enter, Tab, Alt+Keys)
 function createBox(parentId = null, position = null) {
     const box = document.createElement('textarea');
     box.classList.add('org-chart-box');
@@ -57,7 +55,6 @@ function createBox(parentId = null, position = null) {
                 newBoxX = parentLeft;
                 newBoxY = parentTop - box.offsetHeight - gridSize;
             } else {
-                // Default position if parentId is provided but position is null or unknown
                 newBoxX = parentLeft;
                 newBoxY = parentTop + parentHeight + gridSize * 2;
             }
@@ -68,11 +65,10 @@ function createBox(parentId = null, position = null) {
             box.style.left = snappedX + 'px';
             box.style.top = snappedY + 'px';
 
-            drawLine(parentId, boxId); // Draw line back to the parent that triggered creation
+            drawLine(parentId, boxId);
 
         } else {
             console.error("Parent box not found for createBox. Creating as new root.");
-            // Fallback for missing parent: create as a new, initial-like box (centered)
             newBoxX = (orgChartContainer.offsetWidth / 2) - (box.offsetWidth / 2);
             newBoxY = 50;
             const snappedX = Math.round(newBoxX / gridSize) * gridSize;
@@ -81,9 +77,6 @@ function createBox(parentId = null, position = null) {
             box.style.top = snappedY + 'px';
         }
     } else {
-        // This path is for a box created without a parent.
-        // For the *very first* box on load/reset, `createInitialBox` is used.
-        // This acts as a fallback for 'new root' box creation if createBox is called directly without a parent.
         box.style.top = (50 / gridSize) * gridSize + 'px';
         box.style.left = (50 / gridSize) * gridSize + 'px';
     }
@@ -94,9 +87,7 @@ function createBox(parentId = null, position = null) {
 }
 
 // Function to create and position the *very first* box on initial load or reset
-// This ensures it's properly centered and is the only box initially.
 function createInitialBox() {
-    // Clear existing boxes and lines (this is part of its "initial" setup role)
     const existingBoxes = orgChartContainer.querySelectorAll('.org-chart-box');
     existingBoxes.forEach(box => box.remove());
     const svgElements = Array.from(orgChartSVG.children);
@@ -106,7 +97,6 @@ function createInitialBox() {
         }
     });
 
-    // Create the new box element
     const box = document.createElement('textarea');
     box.classList.add('org-chart-box');
     box.placeholder = 'Enter text here...';
@@ -114,15 +104,16 @@ function createInitialBox() {
 
     const boxId = 'box-' + Date.now() + Math.random().toString(16).slice(2);
     box.id = boxId;
-    orgChartContainer.appendChild(box); // Add to DOM first to get dimensions
+    orgChartContainer.appendChild(box);
 
-    // Calculate centering (use current container and box dimensions)
-    const containerWidth = orgChartContainer.offsetWidth; // Gets computed width including padding
+    box.addEventListener('input', updateDocumentTitle);
+
+    const containerWidth = orgChartContainer.offsetWidth;
     const boxWidth = box.offsetWidth;
     const boxHeight = box.offsetHeight;
 
     const centerX = (containerWidth / 2) - (boxWidth / 2);
-    const startY = 50; // Fixed vertical offset from top
+    const startY = 50;
 
     const snappedX = Math.round(centerX / gridSize) * gridSize;
     const snappedY = Math.round(startY / gridSize) * gridSize;
@@ -130,13 +121,25 @@ function createInitialBox() {
     box.style.left = snappedX + 'px';
     box.style.top = snappedY + 'px';
 
-    box.focus(); // Focus the newly created first box
-    resizeContainer(); // Ensure container resizes to fit it
-    activeBox = box; // Set this as the active box for keyboard commands
+    box.focus();
+    activeBox = box;
+    resizeContainer();
+    updateDocumentTitle();
+}
+
+// Function to update the document title based on the first box's content
+function updateDocumentTitle() {
+    const firstBox = document.querySelector('.org-chart-box');
+    let titleContent = "Organidraw";
+
+    if (firstBox && firstBox.value.trim() !== '') {
+        titleContent = firstBox.value.trim() + " — Organidraw";
+    }
+    document.title = titleContent;
 }
 
 
-// Helper function to find the closest points between two box rectangles (from Step 29)
+// Helper function to find the closest points between two box rectangles
 function findClosestPoints(rect1, rect2) {
     const center1X = rect1.width / 2;
     const center1Y = rect1.height / 2;
@@ -144,17 +147,17 @@ function findClosestPoints(rect1, rect2) {
     const center2Y = rect2.height / 2;
 
     const points1 = [
-        { x: center1X, y: 0 },             // Top center
-        { x: rect1.width, y: center1Y },   // Right center
-        { x: center1X, y: rect1.height },  // Bottom center
-        { x: 0, y: center1Y }              // Left center
+        { x: center1X, y: 0 },
+        { x: rect1.width, y: center1Y },
+        { x: center1X, y: rect1.height },
+        { x: 0, y: center1Y }
     ];
 
     const points2 = [
-        { x: center2X, y: 0 },             // Top center
-        { x: rect2.width, y: center2Y },   // Right center
-        { x: center2X, y: rect2.height },  // Bottom center
-        { x: 0, y: center2Y }              // Left center
+        { x: center2X, y: 0 },
+        { x: rect2.width, y: center2Y },
+        { x: center2X, y: rect2.height },
+        { x: 0, y: center2Y }
     ];
 
     let minDistance = Infinity;
@@ -163,17 +166,16 @@ function findClosestPoints(rect1, rect2) {
 
     points1.forEach(p1 => {
         points2.forEach(p2 => {
-            const containerRect = orgChartContainer.getBoundingClientRect(); // Get current container position
-            const absP1X = rect1.left + p1.x; // Absolute position of point 1
+            const containerRect = orgChartContainer.getBoundingClientRect();
+            const absP1X = rect1.left + p1.x;
             const absP1Y = rect1.top + p1.y;
-            const absP2X = rect2.left + p2.x; // Absolute position of point 2
+            const absP2X = rect2.left + p2.x;
             const absP2Y = rect2.top + p2.y;
 
             const distance = Math.sqrt(Math.pow(absP2X - absP1X, 2) + Math.pow(absP2Y - absP1Y, 2));
 
             if (distance < minDistance) {
                 minDistance = distance;
-                // Store points relative to container's top-left for SVG
                 startPoint = { x: absP1X - containerRect.left, y: absP1Y - containerRect.top };
                 endPoint = { x: absP2X - containerRect.left, y: absP2Y - containerRect.top };
             }
@@ -183,7 +185,7 @@ function findClosestPoints(rect1, rect2) {
     return { start: startPoint, end: endPoint };
 }
 
-// Function to draw a line between two boxes (from Step 11, updated in Step 29 and previous fixes)
+// Function to draw a line between two boxes
 function drawLine(fromBoxId, toBoxId) {
     const fromBox = document.getElementById(fromBoxId);
     const toBox = document.getElementById(toBoxId);
@@ -193,7 +195,6 @@ function drawLine(fromBoxId, toBoxId) {
         return;
     }
 
-    // Remove any existing line between these two boxes before drawing a new one.
     const existingLine = orgChartSVG.querySelector(`line[data-from="${fromBoxId}"][data-to="${toBoxId}"]`);
     if (existingLine) {
         existingLine.remove();
@@ -218,17 +219,16 @@ function drawLine(fromBoxId, toBoxId) {
     line.setAttribute('data-from', fromBoxId);
     line.setAttribute('data-to', toBoxId);
 
-    line.setAttribute('marker-end', 'url(#arrowhead)'); // Add arrowhead
+    line.setAttribute('marker-end', 'url(#arrowhead)');
 
     orgChartSVG.appendChild(line);
 }
 
-// Function to update lines when a box moves or is added (from Step 13, updated in Step 29 and previous fixes)
+// Function to update lines when a box moves or is added
 function updateLines(boxId) {
     const box = document.getElementById(boxId);
     if (!box) return;
 
-    // Find all lines connected to this box (either as 'data-from' or 'data-to')
     const connectedLines = orgChartSVG.querySelectorAll(`line[data-from="${boxId}"], line[data-to="${boxId}"]`);
 
     connectedLines.forEach(line => {
@@ -249,12 +249,12 @@ function updateLines(boxId) {
             line.setAttribute('x2', end.x);
             line.setAttribute('y2', end.y);
         } else {
-            line.remove(); // If a connected box is missing, remove the line
+            line.remove();
         }
     });
 }
 
-// Function to resize the container based on box positions (from Step 17, updated in Step 26 and previous fixes)
+// Function to resize the container based on box positions
 function resizeContainer() {
     let maxRight = 0;
     let maxBottom = 0;
@@ -294,14 +294,14 @@ function resizeContainer() {
     orgChartSVG.style.height = requiredHeight + 'px';
 }
 
-// Function to start dragging (from Step 13, updated in previous fixes)
+// Function to start dragging
 function startDrag(event) {
     if (event.target.classList && event.target.classList.contains('org-chart-box')) {
         isDragging = true;
         currentDragBox = event.target;
-        event.preventDefault(); // Prevent text selection when starting drag
+        event.preventDefault();
 
-        currentDragBox.style.zIndex = 100; // Bring dragged box to front
+        currentDragBox.style.zIndex = 100;
 
         initialMouseX = event.clientX;
         initialMouseY = event.clientY;
@@ -313,7 +313,7 @@ function startDrag(event) {
     }
 }
 
-// Function to handle dragging (from Step 13, updated in Step 15)
+// Function to handle dragging
 function drag(event) {
     if (!isDragging) return;
 
@@ -334,7 +334,7 @@ function drag(event) {
     updateLines(currentDragBox.id);
 }
 
-// Function to stop dragging (from Step 13, updated in Step 17)
+// Function to stop dragging
 function stopDrag() {
     if (!isDragging) return;
 
@@ -349,15 +349,28 @@ function stopDrag() {
     document.removeEventListener('mouseup', stopDrag);
 }
 
-// Add the mousedown event listener to the container using event delegation (from Step 13)
+// Add the mousedown event listener to the container using event delegation
 orgChartContainer.addEventListener('mousedown', startDrag);
 
 
-// Get the mode toggle button (from Step 24)
+// Add click listener to the container to handle clicks on boxes
+orgChartContainer.addEventListener('click', handleBoxClick);
+
+// Function to handle clicks on organizational chart boxes
+function handleBoxClick(event) {
+    let targetBox = event.target.closest('.org-chart-box');
+    if (targetBox) {
+        targetBox.focus();
+        // The focusin event listener will then update activeBox.
+    }
+}
+
+
+// Get the mode toggle button
 const modeToggle = document.getElementById('modeToggle');
 modeToggle.addEventListener('click', toggleDarkMode);
 
-// Function to toggle dark mode (from Step 24)
+// Function to toggle dark mode
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     if (document.body.classList.contains('dark-mode')) {
@@ -367,11 +380,11 @@ function toggleDarkMode() {
     }
 }
 
-// Get the export button (from Step 19)
+// Get the export button
 const exportPdfButton = document.getElementById('exportPdfButton');
 exportPdfButton.addEventListener('click', exportChartAsPdf);
 
-// Function to export the organizational chart as PDF (from Step 19, updated in Step 24)
+// Function to export the organizational chart as PDF
 function exportChartAsPdf() {
     const controls = document.getElementById('controls');
     controls.style.display = 'none';
@@ -399,7 +412,7 @@ function exportChartAsPdf() {
     });
 }
 
-// --- File Download/Upload Functionality (from Step 40) ---
+// --- File Download/Upload Functionality ---
 const downloadFileButton = document.getElementById('downloadFileButton');
 const loadFileButton = document.getElementById('loadFileButton');
 const uploadFileTrigger = document.getElementById('uploadFileTrigger');
@@ -503,7 +516,6 @@ function renderChartFromData(data) {
         }
     });
 
-    // Update lines for all boxes (important after mass creation/repositioning)
     orgChartContainer.querySelectorAll('.org-chart-box').forEach(box => updateLines(box.id));
     resizeContainer();
 
@@ -511,14 +523,13 @@ function renderChartFromData(data) {
     if (firstBox) {
         firstBox.focus();
     }
+    updateDocumentTitle(); // Update title after loading data
 }
 
-// --- Reset Canvas Functionality (from Step 38) ---
+// --- Reset Canvas Functionality ---
 const resetButton = document.getElementById('resetButton');
-resetButton.addEventListener('click', () => resetCanvas(true)); // Explicitly require confirmation
+resetButton.addEventListener('click', () => resetCanvas(true));
 
-// This function now acts as a wrapper that calls createInitialBox
-// to set up a new, clean canvas.
 function resetCanvas(requireConfirmation = true) {
     if (requireConfirmation) {
         const confirmReset = confirm("Are you sure you want to reset the canvas? All unsaved changes will be lost.");
@@ -526,39 +537,34 @@ function resetCanvas(requireConfirmation = true) {
             return;
         }
     }
-    // createInitialBox will handle clearing previous elements and setting up a new box.
     createInitialBox();
-    // After reset/initial create, also update fixed panels
     updateFixedPanelPositions();
 }
 
 
-// --- Initial Load Setup (from Step 7, updated multiple times) ---
+// --- Initial Load Setup ---
 window.addEventListener('load', () => {
-    // Check for saved mode preference first
     const savedMode = localStorage.getItem('mode');
     if (savedMode === 'dark') {
         document.body.classList.add('dark-mode');
     }
 
-    // Always start with a fresh initial box when the page loads
-    createInitialBox();
-    // After initial setup, also call updateFixedPanelPositions for correct layout
-    updateFixedPanelPositions();
+    createInitialBox(); // Set up the initial box, focus, and title
+    updateFixedPanelPositions(); // Position fixed elements
 });
 
-// Also call updateFixedPanelPositions on window resize (from Step 42)
+// Also call updateFixedPanelPositions on window resize
 window.addEventListener('resize', updateFixedPanelPositions);
 
 
-// Update activeBox when a box is focused (from Step 7)
+// Update activeBox when a box is focused
 orgChartContainer.addEventListener('focusin', (event) => {
     if (event.target.classList && event.target.classList.contains('org-chart-box')) {
         activeBox = event.target;
     }
 });
 
-// Clear activeBox when focus leaves a box (optional but good practice) (from Step 7)
+// Clear activeBox when focus leaves a box (optional but good practice)
 orgChartContainer.addEventListener('focusout', (event) => {
     if (event.target.classList && event.target.classList.contains('org-chart-box')) {
         setTimeout(() => {
@@ -567,14 +573,14 @@ orgChartContainer.addEventListener('focusout', (event) => {
             }
         }, 10);
     }
-});
+}); // <--- THIS WAS THE MISSING CLOSING CURLY BRACE!
 
-// Function to handle key presses (from Step 7, updated throughout steps)
+// Function to handle key presses
 function handleKeyPress(event) {
     if (event.target.classList && event.target.classList.contains('org-chart-box')) {
         activeBox = event.target;
 
-        // --- Handle Alt + Directional Shortcuts (from Step 27) ---
+        // --- Handle Alt + Directional Shortcuts ---
         if (event.altKey) {
             event.preventDefault();
 
@@ -714,23 +720,32 @@ function handleKeyPress(event) {
 // Add the keydown event listener to the document
 document.addEventListener('keydown', handleKeyPress);
 
-// Function to update the positions of fixed bottom-right panels (from Step 42)
+// Function to update the positions of fixed bottom-right panels
 function updateFixedPanelPositions() {
-    // Check if elements exist before trying to position them
     if (!shortcutMap || !cautionDiv) {
         console.warn("Fixed panels not found, skipping position update.");
         return;
     }
 
-    // Position shortcutMap (its bottom is fixed in CSS to 20px, only need its height)
-    const shortcutMapHeight = shortcutMap.offsetHeight;
-    const spacing = 20; // Desired spacing between panels
+    const shortcutMapComputedStyle = window.getComputedStyle(shortcutMap);
+    const cautionDivComputedStyle = window.getComputedStyle(cautionDiv);
 
-    // Calculate caution's bottom position based on shortcutMap's position and height
-    // bottom of caution = bottom of shortcutMap (20px) + shortcutMap's height + spacing
-    cautionDiv.style.bottom = (20 + shortcutMapHeight + spacing) + 'px';
+    if (shortcutMapComputedStyle.display !== 'none') {
+        shortcutMap.style.bottom = '20px';
+        shortcutMap.style.right = '20px';
+        shortcutMap.style.display = 'block';
+    } else {
+        shortcutMap.style.display = 'none';
+    }
 
-    // Ensure display property is explicitly set, in case it was toggled by another function
-    shortcutMap.style.display = 'block';
-    cautionDiv.style.display = 'block';
+    if (cautionDivComputedStyle.display !== 'none') {
+        const spacing = 20;
+        const shortcutMapHeight = (shortcutMapComputedStyle.display !== 'none') ? shortcutMap.offsetHeight : 0;
+        
+        cautionDiv.style.bottom = (20 + shortcutMapHeight + spacing) + 'px';
+        cautionDiv.style.right = '20px';
+        cautionDiv.style.display = 'block';
+    } else {
+        cautionDiv.style.display = 'none';
+    }
 }
