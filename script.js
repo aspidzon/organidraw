@@ -805,3 +805,67 @@ function updateFixedPanelPositions() {
         caution2Div.style.display = 'none';
     }
 }
+// Portrait mode handler - checks if Y pixels > X pixels
+function handlePortraitMode() {
+    const isPortrait = window.innerHeight > window.innerWidth;
+    
+    // Get or create the style element for portrait mode
+    let portraitStyles = document.getElementById('portrait-mode-styles');
+    if (!portraitStyles) {
+        portraitStyles = document.createElement('style');
+        portraitStyles.id = 'portrait-mode-styles';
+        document.head.appendChild(portraitStyles);
+    }
+    
+    if (isPortrait) {
+        // Apply portrait mode styles when Y > X
+        portraitStyles.textContent = `
+            body {
+                padding: 20px !important;
+            }
+            
+            #isologo {
+                position: fixed !important;
+                top: 20px !important;
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%) scale(0.4) !important;
+                transform-origin: center top !important;
+            }
+            
+            #controls {
+                position: fixed !important;
+                display: flex !important;
+                flex-direction: row !important;
+                top: auto !important;
+                bottom: 30px !important;
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%) !important;
+                width: auto !important;
+                padding: 15px 20px !important;
+                border-radius: 30px !important;
+                background-color: rgba(70, 70, 80, 0.7) !important;
+            }
+            
+            #controls button {
+                margin: 0 8px !important;
+                width: 40px !important;
+                height: 40px !important;
+            }
+            
+            #shortcutMap, #caution, #caution2 {
+                display: none !important;
+            }
+        `;
+    } else {
+        // Remove portrait styles when X > Y
+        portraitStyles.textContent = '';
+    }
+}
+
+// Run on page load
+window.addEventListener('load', handlePortraitMode);
+
+// Run when window is resized
+window.addEventListener('resize', handlePortraitMode);
