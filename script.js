@@ -805,91 +805,120 @@ function updateFixedPanelPositions() {
         caution2Div.style.display = 'none';
     }
 }
-// Direct DOM manipulation for portrait mode
+// Direct DOM manipulation for portrait mode - V3
 function forcePortraitMode() {
-    // Save original controls
     const originalControls = document.getElementById('controls');
-    let portraitControls = null;
-    
+    const isologo = document.getElementById('isologo');
+    const shortcutMap = document.getElementById('shortcutMap');
+    const cautionDiv = document.getElementById('caution');
+    const caution2Div = document.getElementById('caution2');
+
+    let portraitControlsContainer = null;
+
+    // Ensure originalControls is found
+    if (!originalControls) {
+        console.error("Original #controls element not found!");
+        return;
+    }
+    if (!isologo) {
+        console.error("Original #isologo element not found!");
+    }
+
     function checkOrientation() {
         const isPortrait = window.innerHeight > window.innerWidth;
-        
+
         if (isPortrait) {
-            // Hide original controls
-            originalControls.style.display = 'none';
-            
-            // Create portrait controls if they don't exist
-            if (!portraitControls) {
-                portraitControls = document.createElement('div');
-                portraitControls.id = 'portrait-controls';
-                portraitControls.innerHTML = originalControls.innerHTML;
-                
-                // Apply direct inline styles
-                Object.assign(portraitControls.style, {
-                    position: 'fixed',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    bottom: '30px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    padding: '15px 20px',
-                    borderRadius: '30px',
-                    backgroundColor: 'rgba(70, 70, 80, 0.7)',
-                    zIndex: '1000'
-                });
-                
-                document.body.appendChild(portraitControls);
-                
-                // Copy event listeners by cloning the nodes
-                Array.from(originalControls.children).forEach((originalBtn, index) => {
-                    const newBtn = portraitControls.children[index];
-                    newBtn.onclick = originalBtn.onclick;
-                    
-                    // Apply button styles
-                    Object.assign(newBtn.style, {
-                        margin: '0 8px',
-                        width: '40px',
-                        height: '40px'
-                    });
-                });
-            } else {
-                portraitControls.style.display = 'flex';
+            // --- Hide original elements forcefully ---
+            originalControls.style.setProperty('display', 'none', 'important');
+            if (shortcutMap) shortcutMap.style.setProperty('display', 'none', 'important');
+            if (cautionDiv) cautionDiv.style.setProperty('display', 'none', 'important');
+            if (caution2Div) caution2Div.style.setProperty('display', 'none', 'important');
+
+
+            // --- Style Isologo for Portrait ---
+            if (isologo) {
+                isologo.style.setProperty('position', 'fixed', 'important');
+                isologo.style.setProperty('top', '20px', 'important');
+                isologo.style.setProperty('left', '50%', 'important');
+                isologo.style.setProperty('transform', 'translateX(-50%) scale(0.4)', 'important');
+                isologo.style.setProperty('transform-origin', 'center top', 'important');
+                isologo.style.setProperty('right', 'auto', 'important'); // Override potential right positioning
             }
-            
-            // Center logo
-            const isologo = document.getElementById('isologo');
-            Object.assign(isologo.style, {
-                position: 'fixed',
-                top: '20px',
-                left: '50%',
-                transform: 'translateX(-50%) scale(0.4)',
-                transformOrigin: 'center top'
-            });
-            
-            // Hide shortcut map and cautions
-            document.getElementById('shortcutMap').style.display = 'none';
-            document.getElementById('caution').style.display = 'none';
-            document.getElementById('caution2').style.display = 'none';
-            
+
+            // --- Create or Show Portrait Controls ---
+            if (!portraitControlsContainer) {
+                portraitControlsContainer = document.createElement('div');
+                portraitControlsContainer.id = 'portrait-controls-container'; // New ID
+                document.body.appendChild(portraitControlsContainer);
+
+                // Apply container styles
+                portraitControlsContainer.style.setProperty('position', 'fixed', 'important');
+                portraitControlsContainer.style.setProperty('display', 'flex', 'important');
+                portraitControlsContainer.style.setProperty('flex-direction', 'row', 'important');
+                portraitControlsContainer.style.setProperty('bottom', '30px', 'important');
+                portraitControlsContainer.style.setProperty('left', '50%', 'important');
+                portraitControlsContainer.style.setProperty('transform', 'translateX(-50%)', 'important');
+                portraitControlsContainer.style.setProperty('padding', '15px 20px', 'important');
+                portraitControlsContainer.style.setProperty('border-radius', '30px', 'important');
+                portraitControlsContainer.style.setProperty('background-color', 'rgba(70, 70, 80, 0.7)', 'important');
+                portraitControlsContainer.style.setProperty('z-index', '2000', 'important'); // Ensure it's on top
+
+                // Clone buttons from originalControls to portraitControlsContainer
+                Array.from(originalControls.children).forEach(originalButton => {
+                    if (originalButton.tagName === 'BUTTON' || (originalButton.tagName === 'INPUT' && originalButton.type === 'file')) {
+                        const clonedButton = originalButton.cloneNode(true); // Deep clone to get inner <img>
+                        
+                        // Re-attach event listeners if they were on the original button ID
+                        // This is a common case for simple onclicks or if script targets IDs
+                        if (originalButton.id) {
+                            const originalHandler = originalButton.onclick;
+                            if (originalHandler) {
+                                clonedButton.onclick = originalHandler;
+                            }
+                            // For addEventListener, it's more complex, but let's see if this works first
+                            // For input type=file, the change listener is on loadFileButton
+                            if (originalButton.id === 'loadFileButton' && document.getElementById('loadFileButton')) {
+                                clonedButton.addEventListener('change', loadChartFromFile); // Re-attach specific listener
+                            }
+                        }
+
+
+                        clonedButton.style.setProperty('margin', '0 8px', 'important');
+                        clonedButton.style.setProperty('width', '40px', 'important');
+                        clonedButton.style.setProperty('height', '40px', 'important');
+                        // Ensure inner images are visible if they were hidden by other rules
+                        const imgIcon = clonedButton.querySelector('img');
+                        if (imgIcon) {
+                            imgIcon.style.setProperty('display', 'block', 'important'); // Or 'inline-block'
+                        }
+                        portraitControlsContainer.appendChild(clonedButton);
+                    }
+                });
+            }
+            portraitControlsContainer.style.setProperty('display', 'flex', 'important');
+
         } else {
-            // Restore original layout
-            originalControls.style.display = 'flex';
-            if (portraitControls) {
-                portraitControls.style.display = 'none';
+            // --- Restore Landscape Layout ---
+            originalControls.style.display = ''; // Remove inline display:none
+            if (shortcutMap) shortcutMap.style.display = '';
+            if (cautionDiv) cautionDiv.style.display = '';
+            if (caution2Div) caution2Div.style.display = '';
+
+
+            if (isologo) {
+                // Clear all inline styles set by this script for the logo
+                isologo.style.cssText = '';
             }
-            
-            // Restore logo position
-            const isologo = document.getElementById('isologo');
-            isologo.style = ''; // Clear inline styles
-            
-            // Restore shortcut map and cautions if needed
-            // (They have their own responsive hiding in CSS)
+
+            if (portraitControlsContainer) {
+                portraitControlsContainer.style.setProperty('display', 'none', 'important');
+            }
         }
     }
-    
+
     // Initial check
     checkOrientation();
-    
+
     // Check whenever window resizes
     window.addEventListener('resize', checkOrientation);
 }
