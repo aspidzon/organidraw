@@ -805,70 +805,85 @@ function updateFixedPanelPositions() {
         caution2Div.style.display = 'none';
     }
 }
-// Direct portrait mode handler with debugging
+// Direct DOM manipulation for portrait mode
 function forcePortraitMode() {
-    // Create a debug element to show what's happening
-    const debugElement = document.createElement('div');
-    debugElement.style.position = 'fixed';
-    debugElement.style.bottom = '150px';
-    debugElement.style.left = '0';
-    debugElement.style.right = '0';
-    debugElement.style.textAlign = 'center';
-    debugElement.style.zIndex = '9999';
-    debugElement.style.padding = '5px';
-    debugElement.style.fontSize = '12px';
-    document.body.appendChild(debugElement);
+    // Save original controls
+    const originalControls = document.getElementById('controls');
+    let portraitControls = null;
     
-    // Create the portrait mode stylesheet
-    const portraitStylesheet = document.createElement('style');
-    portraitStylesheet.id = 'portrait-mode-styles';
-    document.head.appendChild(portraitStylesheet);
-    
-    // Function to check and update orientation
     function checkOrientation() {
         const isPortrait = window.innerHeight > window.innerWidth;
-        debugElement.textContent = `Height: ${window.innerHeight}, Width: ${window.innerWidth}, Portrait: ${isPortrait}`;
-        debugElement.style.backgroundColor = isPortrait ? 'green' : 'red';
-        debugElement.style.color = 'white';
         
         if (isPortrait) {
-            portraitStylesheet.textContent = `
-                #isologo {
-                    position: fixed !important;
-                    top: 20px !important;
-                    left: 50% !important;
-                    right: auto !important;
-                    transform: translateX(-50%) scale(0.4) !important;
-                    transform-origin: center top !important;
-                }
+            // Hide original controls
+            originalControls.style.display = 'none';
+            
+            // Create portrait controls if they don't exist
+            if (!portraitControls) {
+                portraitControls = document.createElement('div');
+                portraitControls.id = 'portrait-controls';
+                portraitControls.innerHTML = originalControls.innerHTML;
                 
-                #controls {
-                    position: fixed !important;
-                    display: flex !important;
-                    flex-direction: row !important;
-                    top: auto !important;
-                    bottom: 30px !important;
-                    left: 50% !important;
-                    right: auto !important;
-                    transform: translateX(-50%) !important;
-                    width: auto !important;
-                    padding: 15px 20px !important;
-                    border-radius: 30px !important;
-                    background-color: rgba(70, 70, 80, 0.7) !important;
-                }
+                // Apply direct inline styles
+                Object.assign(portraitControls.style, {
+                    position: 'fixed',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    bottom: '30px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    padding: '15px 20px',
+                    borderRadius: '30px',
+                    backgroundColor: 'rgba(70, 70, 80, 0.7)',
+                    zIndex: '1000'
+                });
                 
-                #controls button {
-                    margin: 0 8px !important;
-                    width: 40px !important;
-                    height: 40px !important;
-                }
+                document.body.appendChild(portraitControls);
                 
-                #shortcutMap, #caution, #caution2 {
-                    display: none !important;
-                }
-            `;
+                // Copy event listeners by cloning the nodes
+                Array.from(originalControls.children).forEach((originalBtn, index) => {
+                    const newBtn = portraitControls.children[index];
+                    newBtn.onclick = originalBtn.onclick;
+                    
+                    // Apply button styles
+                    Object.assign(newBtn.style, {
+                        margin: '0 8px',
+                        width: '40px',
+                        height: '40px'
+                    });
+                });
+            } else {
+                portraitControls.style.display = 'flex';
+            }
+            
+            // Center logo
+            const isologo = document.getElementById('isologo');
+            Object.assign(isologo.style, {
+                position: 'fixed',
+                top: '20px',
+                left: '50%',
+                transform: 'translateX(-50%) scale(0.4)',
+                transformOrigin: 'center top'
+            });
+            
+            // Hide shortcut map and cautions
+            document.getElementById('shortcutMap').style.display = 'none';
+            document.getElementById('caution').style.display = 'none';
+            document.getElementById('caution2').style.display = 'none';
+            
         } else {
-            portraitStylesheet.textContent = '';
+            // Restore original layout
+            originalControls.style.display = 'flex';
+            if (portraitControls) {
+                portraitControls.style.display = 'none';
+            }
+            
+            // Restore logo position
+            const isologo = document.getElementById('isologo');
+            isologo.style = ''; // Clear inline styles
+            
+            // Restore shortcut map and cautions if needed
+            // (They have their own responsive hiding in CSS)
         }
     }
     
