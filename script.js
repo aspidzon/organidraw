@@ -804,24 +804,80 @@ function updateFixedPanelPositions() {
     } else {
         caution2Div.style.display = 'none';
     }
-}// Simple portrait mode handler
-function setupPortraitMode() {
+}
+// Direct portrait mode handler with debugging
+function forcePortraitMode() {
+    // Create a debug element to show what's happening
+    const debugElement = document.createElement('div');
+    debugElement.style.position = 'fixed';
+    debugElement.style.bottom = '150px';
+    debugElement.style.left = '0';
+    debugElement.style.right = '0';
+    debugElement.style.textAlign = 'center';
+    debugElement.style.zIndex = '9999';
+    debugElement.style.padding = '5px';
+    debugElement.style.fontSize = '12px';
+    document.body.appendChild(debugElement);
+    
+    // Create the portrait mode stylesheet
+    const portraitStylesheet = document.createElement('style');
+    portraitStylesheet.id = 'portrait-mode-styles';
+    document.head.appendChild(portraitStylesheet);
+    
+    // Function to check and update orientation
+    function checkOrientation() {
+        const isPortrait = window.innerHeight > window.innerWidth;
+        debugElement.textContent = `Height: ${window.innerHeight}, Width: ${window.innerWidth}, Portrait: ${isPortrait}`;
+        debugElement.style.backgroundColor = isPortrait ? 'green' : 'red';
+        debugElement.style.color = 'white';
+        
+        if (isPortrait) {
+            portraitStylesheet.textContent = `
+                #isologo {
+                    position: fixed !important;
+                    top: 20px !important;
+                    left: 50% !important;
+                    right: auto !important;
+                    transform: translateX(-50%) scale(0.4) !important;
+                    transform-origin: center top !important;
+                }
+                
+                #controls {
+                    position: fixed !important;
+                    display: flex !important;
+                    flex-direction: row !important;
+                    top: auto !important;
+                    bottom: 30px !important;
+                    left: 50% !important;
+                    right: auto !important;
+                    transform: translateX(-50%) !important;
+                    width: auto !important;
+                    padding: 15px 20px !important;
+                    border-radius: 30px !important;
+                    background-color: rgba(70, 70, 80, 0.7) !important;
+                }
+                
+                #controls button {
+                    margin: 0 8px !important;
+                    width: 40px !important;
+                    height: 40px !important;
+                }
+                
+                #shortcutMap, #caution, #caution2 {
+                    display: none !important;
+                }
+            `;
+        } else {
+            portraitStylesheet.textContent = '';
+        }
+    }
+    
     // Initial check
     checkOrientation();
     
     // Check whenever window resizes
     window.addEventListener('resize', checkOrientation);
-    
-    function checkOrientation() {
-        if (window.innerHeight > window.innerWidth) {
-            // Portrait mode (height > width)
-            document.body.classList.add('portrait-mode');
-        } else {
-            // Landscape mode (width > height)
-            document.body.classList.remove('portrait-mode');
-        }
-    }
 }
 
 // Run on page load
-window.addEventListener('load', setupPortraitMode);
+window.addEventListener('DOMContentLoaded', forcePortraitMode);
