@@ -491,3 +491,43 @@ body.dark-mode .dark-mode-icon {
         margin: 5px 0;
     }
 }
+/* Portrait mode styles - applied when body has .portrait-mode class */
+body.portrait-mode {
+    padding: 20px !important;
+}
+
+body.portrait-mode #isologo {
+    position: fixed !important;
+    top: 20px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) scale(0.4) !important;
+    transform-origin: center top !important;
+}
+
+body.portrait-mode #controls {
+    position: fixed !important;
+    display: flex !important;
+    flex-direction: row !important;
+    top: auto !important;
+    bottom: 30px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: auto !important;
+    padding: 15px 20px !important;
+    border-radius: 30px !important;
+    background-color: rgba(70, 70, 80, 0.7) !important;
+}
+
+body.portrait-mode #controls button {
+    margin: 0 8px !important;
+    width: 40px !important;
+    height: 40px !important;
+}
+
+body.portrait-mode #shortcutMap,
+body.portrait-mode #caution,
+body.portrait-mode #caution2 {
+    display: none !important;
+}
