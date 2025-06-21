@@ -409,8 +409,7 @@ body.portrait-orientation #caution2 {
     font-size: 13px; /* Slightly smaller font */
   }
 
-  /* Only apply if NOT in portrait mode */
-  body:not(.portrait-orientation) #isologo {
+  #isologo {
     width: 300px; /* Reduce base width for scaling */
     transform: scale(0.2); /* Keep scale factor */
   }

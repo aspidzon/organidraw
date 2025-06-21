@@ -1,3 +1,5 @@
+// ... (Your existing JavaScript code before forcePortraitMode) ...
+
 const orgChartContainer = document.getElementById('orgChartContainer');
 const orgChartSVG = document.getElementById('orgChartSVG'); // Get the SVG element
 
@@ -441,8 +443,10 @@ function exportChartAsPdf() {
     const marginX = 10;
     const marginY = 10;
 
-    // Check if the image is too tall for the page, and scale down if necessary
+    let currentY = marginY;
+    // Check if the image fits on one page, if not, scale down or paginate if necessary
     if (imgHeight > pdf.internal.pageSize.getHeight() - 2 * marginY) {
+      // Image is too tall, scale to fit height, adjust width
       const imgHeightAdjusted = pdf.internal.pageSize.getHeight() - 2 * marginY;
       const imgWidthAdjusted = (canvas.width * imgHeightAdjusted) / canvas.height;
       pdf.addImage(imgData, 'PNG', marginX + (imgWidth - imgWidthAdjusted) / 2, marginY, imgWidthAdjusted, imgHeightAdjusted);
