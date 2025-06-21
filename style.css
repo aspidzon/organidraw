@@ -1,494 +1,564 @@
 /* Define CSS variables for colors (from Step 23, updated by you) */
 :root {
-    --background-color: #FFFDFD;
-    --text-color: #444746;
-    --box-background: #fff;
-    --box-border: #ccc;
-    --box-shadow: rgba(0, 0, 0, 0.2);
-    --line-color: #000;
-    --control-background: #f4f4f4;
-    --button-background: #4CAF50;
-    --button-text: white;
-    --button-hover-background: #45a049;
-    --focused-box-border: dodgerblue;
-    --key-background: #e0e0e0; /* Added a specific background for keys if desired, or use --box-background */
-    --key-border: #b0b0b0; /* Added a specific border for keys */
-    --key-shadow: rgba(0, 0, 0, 0.1); /* Added a specific shadow for keys */
+  --background-color: #fffdfd;
+  --text-color: #444746;
+  --box-background: #fff;
+  --box-border: #ccc;
+  --box-shadow: rgba(0, 0, 0, 0.2);
+  --line-color: #000;
+  --control-background: #f4f4f4;
+  --button-background: #4caf50;
+  --button-text: white;
+  --button-hover-background: #45a049;
+  --focused-box-border: dodgerblue;
+  --key-background: #e0e0e0; /* Added a specific background for keys if desired, or use --box-background */
+  --key-border: #b0b0b0; /* Added a specific border for keys */
+  --key-shadow: rgba(0, 0, 0, 0.1); /* Added a specific shadow for keys */
 }
 
 /* Dark mode variables (from Step 23, updated by you) */
 body.dark-mode {
-    --background-color: #303030;
-    --text-color: #f4f4f4;
-    --box-background: #555;
-    --box-border: #666;
-    --box-shadow: rgba(255, 255, 255, 0.2); /* Adjusted shadow for visibility in dark mode */
-    --line-color: #ccc;
-    --control-background: #363946;
-    --button-background: #696773;
-    --button-text: #f4f4f4;
-    --button-hover-background: #819595;
-    --focused-box-border: lightblue;
-    --key-background: #696773; /* Dark mode key background */
-    --key-border: #707070; /* Dark mode key border */
-    --key-shadow: rgba(255, 255, 255, 0.1); /* Dark mode key shadow */
+  --background-color: #303030;
+  --text-color: #f4f4f4;
+  --box-background: #555;
+  --box-border: #666;
+  --box-shadow: rgba(255, 255, 255, 0.2); /* Adjusted shadow for visibility in dark mode */
+  --line-color: #ccc;
+  --control-background: #363946;
+  --button-background: #696773;
+  --button-text: #f4f4f4;
+  --button-hover-background: #819595;
+  --focused-box-border: lightblue;
+  --key-background: #696773; /* Dark mode key background */
+  --key-border: #707070; /* Dark mode key border */
+  --key-shadow: rgba(255, 255, 255, 0.1); /* Dark mode key shadow */
 }
 
 body {
-    margin: 0;
-    font-family: sans-serif; /* Will be changed to SF Pro later */
-    background-color: var(--background-color);
-    color: var(--text-color);
-    overflow: auto;
-    /* Default padding for larger screens */
-    padding-top: 70px;     /* Space for controls at top */
-    padding-left: 70px;    /* Space for isologo at left */
-    padding-right: 20px;   /* Standard right padding */
-    padding-bottom: 250px; /* Generous space for bottom fixed elements (shortcut map, caution) */
-    transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  font-family: sans-serif; /* Will be changed to SF Pro later */
+  background-color: var(--background-color);
+  color: var(--text-color);
+  overflow: auto;
+  /* Default padding for larger screens */
+  padding-top: 70px; /* Space for controls at top */
+  padding-left: 70px; /* Space for isologo at left */
+  padding-right: 20px; /* Standard right padding */
+  padding-bottom: 250px; /* Generous space for bottom fixed elements (shortcut map, caution) */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #orgChartContainer {
-    position: relative;
-    padding: 20px;
-    overflow: auto;
-    min-width: 100%; /* Ensures it takes full width initially */
-    min-height: 100vh; /* Ensures it takes full height initially */
-    box-sizing: content-box;
+  position: relative;
+  padding: 20px;
+  overflow: auto;
+  min-width: 100%; /* Ensures it takes full width initially */
+  min-height: 100vh; /* Ensures it takes full height initially */
+  box-sizing: content-box;
 }
 
 #orgChartSVG {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%; /* Default width/height, will be overridden by JS for chart size */
-    height: 100%; /* Default width/height, will be overridden by JS for chart size */
-    pointer-events: none;
-    z-index: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Default width/height, will be overridden by JS for chart size */
+  height: 100%; /* Default width/height, will be overridden by JS for chart size */
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Style for the SVG lines (from Step 11, updated in Step 23) */
 #orgChartSVG line {
-    stroke: var(--line-color);
-    transition: stroke 0.3s ease;
+  stroke: var(--line-color);
+  transition: stroke 0.3s ease;
 }
 
 /* Style for the arrowhead marker (from Step 31) */
 #arrowhead polygon {
-    fill: var(--line-color); /* Use line color variable for arrowhead fill */
-    transition: fill 0.3s ease; /* Smooth transition for color change */
+  fill: var(--line-color); /* Use line color variable for arrowhead fill */
+  transition: fill 0.3s ease; /* Smooth transition for color change */
 }
-
 
 /* Isologo styling (from Step 49, corrected sizing) */
 #isologo {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    /* Set a base natural width/height for the image.
-       The scale property will then scale this.
-       Assuming your 'ORGANIDRAW' image is roughly 400px wide,
-       then scale(0.2) makes it 80px wide. Adjust base width/height as needed. */
-    width: 400px; /* Base width of the full logotype image */
-    height: auto; /* Maintain aspect ratio */
-    transform: scale(0.4); /* Apply the scaling as requested */
-    transform-origin: top left; /* Make it scale from its top-left corner */
-    z-index: 1000; /* Ensure it's on top */
-    transition: filter 0.3s ease; /* Smooth transition for color inversion */
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 400px; /* Base width of the full logotype image */
+  height: auto; /* Maintain aspect ratio */
+  transform: scale(0.4); /* Apply the scaling as requested */
+  transform-origin: top left; /* Make it scale from its top-left corner */
+  z-index: 1000; /* Ensure it's on top */
+  transition: filter 0.3s ease, top 0.3s ease, left 0.3s ease, transform 0.3s ease; /* Add transform transition */
 }
 
 /* Dark mode adjustment for the isologo */
 body.dark-mode #isologo {
-    filter: invert(1); /* Invert colors to make a dark logo appear light */
+  filter: invert(1); /* Invert colors to make a dark logo appear light */
 }
 
-
 .org-chart-box {
-    width: 150px;
-    height: 50px;
-    padding: 10px;
-    border: 1px solid var(--box-border);
-    border-radius: 12.5px;
-    box-shadow: 2px 2px 5px var(--box-shadow);
-    resize: none;
-    overflow: hidden;
-    font-size: 14px;
-    line-height: 1.4;
-    box-sizing: border-box;
-    outline: none;
-    background-color: var(--box-background);
-    color: var(--text-color);
-    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-    font-family: sans-serif;
+  width: 150px;
+  height: 50px;
+  padding: 10px;
+  border: 1px solid var(--box-border);
+  border-radius: 12.5px;
+  box-shadow: 2px 2px 5px var(--box-shadow);
+  resize: none;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.4;
+  box-sizing: border-box;
+  outline: none;
+  background-color: var(--box-background);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease, color 0.3s ease;
+  font-family: sans-serif;
 }
 
 .org-chart-box:focus {
-    border-color: var(--focused-box-border);
+  border-color: var(--focused-box-border);
 }
 
 #controls {
-    position: fixed; /* Fixed position (from Step 21) */
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    background-color: var(--control-background);
-    padding: 10px;
-    border-radius: 12.5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    text-align: right;
-    transition: background-color 0.3s ease;
-    display: flex; /* Use flexbox to align buttons horizontally */
-    align-items: center;
+  position: fixed; /* Fixed position (from Step 21) */
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: var(--control-background);
+  padding: 10px;
+  border-radius: 12.5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, top 0.3s ease, right 0.3s ease,
+    left 0.3s ease, transform 0.3s ease, padding 0.3s ease; /* Add more transitions */
+  display: flex; /* Use flexbox to align buttons horizontally */
+  flex-direction: row; /* Default for landscape */
+  align-items: center;
 }
 
 #controls button {
-    /* Adjusted padding, width/height to make it a square for the icon */
-    padding: 0;
-    width: 40px;
-    height: 40px;
-    display: flex; /* Use flexbox to center the icon */
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* Hide anything outside button bounds */
-    cursor: pointer;
-    border: none;
-    border-radius: 8.5px;
-    background-color: var(--button-background);
-    color: var(--button-text);
-    margin-left: 10px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex; /* Use flexbox to center the icon */
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Hide anything outside button bounds */
+  cursor: pointer;
+  border: none;
+  border-radius: 8.5px;
+  background-color: var(--button-background);
+  color: var(--button-text);
+  margin-left: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease, margin 0.3s ease; /* Add margin transition */
+}
+
+#controls button:first-child {
+  margin-left: 0; /* Remove left margin for the first button in the row */
 }
 
 #controls button:hover {
-    background-color: var(--button-hover-background);
+  background-color: var(--button-hover-background);
 }
 
 /* Style for the button icons (PNG or SVG) (from Step 51, size updated Step 53) */
 .button-icon {
-    width: 20px; /* Made tinier as requested */
-    height: 20px; /* Made tinier as requested */
-    filter: none; /* Default: no filter. */
-    transition: filter 0.3s ease;
+  width: 20px; /* Made tinier as requested */
+  height: 20px; /* Made tinier as requested */
+  filter: none; /* Default: no filter. */
+  transition: filter 0.3s ease;
 }
 
 /* Dark mode adjustment for button icons (will apply to PNGs if needed, but often not ideal) */
 body.dark-mode .button-icon {
-    filter: invert(1); /* Converts black to white, preserves transparency. */
+  filter: invert(1); /* Converts black to white, preserves transparency. */
 }
-
 
 /* Style for the mode toggle button specifically (from Step 51, size updated Step 53) */
 #modeToggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    overflow: hidden;
-    position: relative;
-    margin-right: 10px; /* Explicitly add space to its right */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  margin-right: 10px; /* Explicitly add space to its right */
 }
 
 .mode-icon {
-    width: 24px;
-    height: 24px;
-    /* Removed `fill` as these are now PNG `<img>` tags */
-    position: absolute;
-    transition: transform 0.5s ease, opacity 0.5s ease, filter 0.3s ease;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  transition: transform 0.5s ease, opacity 0.5s ease, filter 0.3s ease;
 }
 
 /* Light mode icon state (initially visible) */
-.light-mode-icon { /* Replaced .sun-icon */
-    opacity: 1;
-    transform: rotate(0deg);
-    filter: none; /* No filter for default light mode display */
+.light-mode-icon {
+  opacity: 1;
+  transform: rotate(0deg);
+  filter: none; /* No filter for default light mode display */
 }
 
 /* Dark mode icon state (initially hidden) */
-.dark-mode-icon { /* Replaced .moon-icon */
-    opacity: 0;
-    transform: rotate(180deg);
-    filter: invert(1); /* Assume dark icon that needs to be inverted for light background if initially dark */
+.dark-mode-icon {
+  opacity: 0;
+  transform: rotate(180deg);
+  filter: invert(1); /* Assume dark icon that needs to be inverted for light background if initially dark */
 }
 
 /* Dark mode behavior for mode icons */
 body.dark-mode .light-mode-icon {
-    opacity: 0; /* Hide light mode icon */
-    transform: rotate(-180deg); /* Rotate out */
-    filter: none; /* Reset filter when hidden or moving out */
+  opacity: 0; /* Hide light mode icon */
+  transform: rotate(-180deg); /* Rotate out */
+  filter: none; /* Reset filter when hidden or moving out */
 }
 
 body.dark-mode .dark-mode-icon {
-    opacity: 1; /* Show dark mode icon */
-    transform: rotate(0deg); /* Rotate in */
-    filter: none; /* No filter for dark mode display if the icon is already light */
+  opacity: 1; /* Show dark mode icon */
+  transform: rotate(0deg); /* Rotate in */
+  filter: none; /* No filter for dark mode display if the icon is already light */
 }
-
 
 /* Shortcut Map (from Step 34) */
 #shortcutMap {
-    position: fixed;
-    bottom: 20px; /* Fixed to bottom-right edge */
-    right: 20px;
-    z-index: 999;
-    background-color: var(--control-background);
-    color: var(--text-color);
-    padding: 15px;
-    border-radius: 12.5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    text-align: left;
-    width: 280px; /* Fixed width */
-    box-sizing: border-box; /* Include padding in width */
-    display: block; /* ENSURE VISIBILITY by default */
+  position: fixed;
+  bottom: 20px; /* Fixed to bottom-right edge */
+  right: 20px;
+  z-index: 999;
+  background-color: var(--control-background);
+  color: var(--text-color);
+  padding: 15px;
+  border-radius: 12.5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: left;
+  width: 280px; /* Fixed width */
+  box-sizing: border-box; /* Include padding in width */
+  display: block; /* ENSURE VISIBILITY by default */
 }
 
 #shortcutMap h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 16px;
 }
 
 #shortcutMap ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 #shortcutMap li {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 /* Styling for keyboard keys within shortcut map (from Step 36) */
 #shortcutMap li strong {
-    display: inline-block;
-    padding: 3px 6px;
-    margin: 0 4px 0 0;
-    background-color: var(--key-background);
-    color: var(--text-color);
-    border: 1px solid var(--key-border);
-    border-radius: 3px;
-    box-shadow: 0 1px 2px var(--key-shadow);
-    font-weight: normal;
-    font-family: monospace;
-    min-width: 15px;
-    text-align: center;
-    line-height: 1.2;
-    box-sizing: border-box;
-    vertical-align: middle;
+  display: inline-block;
+  padding: 3px 6px;
+  margin: 0 4px 0 0;
+  background-color: var(--key-background);
+  color: var(--text-color);
+  border: 1px solid var(--key-border);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px var(--key-shadow);
+  font-weight: normal;
+  font-family: monospace;
+  min-width: 15px;
+  text-align: center;
+  line-height: 1.2;
+  box-sizing: border-box;
+  vertical-align: middle;
 }
 
 /* Caution div styling (from your HTML, positioned by JS, height removed by me) */
 #caution {
-    width: 280px; /* Fixed width (matches shortcut map for alignment) */
-    position: fixed;
-    /* bottom will be set by JavaScript dynamically */
-    right: 20px; /* Aligned with shortcutMap on the right */
-    z-index: 999;
-    background-color: var(--control-background);
-    color: var(--text-color);
-    padding: 15px;
-    border-radius: 12.5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    font-size: 16px;
-    line-height: 1.2;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    font-family: sans-serif;
-    box-sizing: border-box; /* Crucial for consistent sizing */
-    display: block; /* ENSURE VISIBILITY by default */
+  width: 280px; /* Fixed width (matches shortcut map for alignment) */
+  position: fixed;
+  /* bottom will be set by JavaScript dynamically */
+  right: 20px; /* Aligned with shortcutMap on the right */
+  z-index: 999;
+  background-color: var(--control-background);
+  color: var(--text-color);
+  padding: 15px;
+  border-radius: 12.5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  line-height: 1.2;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: sans-serif;
+  box-sizing: border-box; /* Crucial for consistent sizing */
+  display: block; /* ENSURE VISIBILITY by default */
 }
 /* New caution2 div styling - make it look like other caution boxes */
 #caution2 {
-    width: 280px; /* Fixed width (matches shortcut map for alignment) */
-    position: fixed;
-    /* bottom will be set by JavaScript dynamically */
-    right: 20px; /* Aligned with shortcutMap on the right */
-    z-index: 999;
-    background-color: var(--control-background);
-    color: var(--text-color);
-    padding: 15px;
-    border-radius: 12.5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    font-size: 16px;
-    line-height: 1.2;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    font-family: sans-serif;
-    box-sizing: border-box; /* Crucial for consistent sizing */
-    display: block; /* ENSURE VISIBILITY by default */
+  width: 280px; /* Fixed width (matches shortcut map for alignment) */
+  position: fixed;
+  /* bottom will be set by JavaScript dynamically */
+  right: 20px; /* Aligned with shortcutMap on the right */
+  z-index: 999;
+  background-color: var(--control-background);
+  color: var(--text-color);
+  padding: 15px;
+  border-radius: 12.5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  line-height: 1.2;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: sans-serif;
+  box-sizing: border-box; /* Crucial for consistent sizing */
+  display: block; /* ENSURE VISIBILITY by default */
 }
 
-#caution a, #caution2 a { /* Styling for the feedback link within caution div (apply to both) */
-    color: var(--text-color); /* Inherit or explicitly set text color */
-    text-decoration: underline; /* Default underline */
-    word-break: break-all; /* Allow breaking of long words to prevent overflow */
-    transition: color 0.3s ease; /* Ensure link color transitions with theme */
+#caution a,
+#caution2 a {
+  /* Styling for the feedback link within caution div (apply to both) */
+  color: var(--text-color); /* Inherit or explicitly set text color */
+  text-decoration: underline; /* Default underline */
+  word-break: break-all; /* Allow breaking of long words to prevent overflow */
+  transition: color 0.3s ease; /* Ensure link color transitions with theme */
 }
 
-#caution a:hover, #caution2 a:hover {
-    color: dodgerblue; /* Highlight on hover */
+#caution a:hover,
+#caution2 a:hover {
+  color: dodgerblue; /* Highlight on hover */
 }
-
 
 /* Specific style for reset button */
 #resetButton {
-    background-color: #f44336;
+  background-color: #f44336;
 }
 
 #resetButton:hover {
-    background-color: #d32f2f;
+  background-color: #d32f2f;
 }
 
-/* --- Media Queries for Responsiveness (from Step 43/49) --- */
+/* --- Media Queries for Responsiveness --- */
+
+/* Portrait orientation specific styles (for phones/tablets held vertically) */
+body.portrait-orientation {
+  /* Adjust body padding for bottom controls */
+  padding-bottom: 120px; /* Space for the bottom control bar */
+  padding-top: 100px; /* More space for centered logo */
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+body.portrait-orientation #isologo {
+  position: fixed;
+  top: 20px; /* Fixed to top */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%) scale(0.3); /* Adjust scale for portrait */
+  width: 400px; /* Base width before scale */
+  right: auto; /* Override potential right positioning */
+  transform-origin: center top;
+}
+
+body.portrait-orientation #controls {
+  position: fixed;
+  bottom: 20px; /* Stick to bottom */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust to truly center */
+  top: auto; /* Clear top positioning */
+  right: auto; /* Clear right positioning */
+  padding: 15px 20px; /* More padding for a floating bar look */
+  border-radius: 30px; /* More rounded corners */
+  background-color: rgba(
+    70,
+    70,
+    80,
+    0.7
+  ); /* Semi-transparent background */
+  backdrop-filter: blur(5px); /* Optional: blur effect for modern browsers */
+  flex-direction: row; /* Ensure row direction for the floating bar */
+  margin: 0; /* Remove any external margins */
+  width: fit-content; /* Shrink-wrap content */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+}
+
+body.portrait-orientation #controls button {
+  margin: 0 8px; /* Space between buttons */
+  width: 40px;
+  height: 40px;
+}
+
+body.portrait-orientation #controls button:first-child {
+  margin-left: 0; /* No left margin for the first button */
+}
+
+body.portrait-orientation #modeToggle {
+  margin-right: 8px; /* Consistent margin for mode toggle */
+}
+
+/* Hide these panels in portrait mode to save space */
+body.portrait-orientation #shortcutMap,
+body.portrait-orientation #caution,
+body.portrait-orientation #caution2 {
+  display: none;
+}
 
 /* For screens smaller than 1024px (e.g., smaller laptops, large tablets) - New Breakpoint */
 @media (max-width: 1024px) {
-    .org-chart-box {
-        font-size: 13px; /* Slightly smaller font */
-    }
+  .org-chart-box {
+    font-size: 13px; /* Slightly smaller font */
+  }
 
-    #isologo {
-        width: 300px; /* Reduce base width for scaling */
-        transform: scale(0.2); /* Keep scale factor */
-    }
+  /* Only apply if NOT in portrait mode */
+  body:not(.portrait-orientation) #isologo {
+    width: 300px; /* Reduce base width for scaling */
+    transform: scale(0.2); /* Keep scale factor */
+  }
 }
 
 /* For screens smaller than 768px (e.g., tablets in portrait, large phones) */
 @media (max-width: 768px) {
-    body {
-        padding-top: 20px;     /* Reduce top padding for controls */
-        padding-left: 20px;    /* Adjust padding-left for smaller screens */
-        padding-right: 10px;
-        padding-bottom: 150px; /* Adjust if bottom panels are smaller or hidden */
-    }
+  body:not(.portrait-orientation) {
+    /* Only apply if NOT in portrait mode (i.e., landscape tablet) */
+    padding-top: 20px; /* Reduce top padding for controls */
+    padding-left: 20px; /* Adjust padding-left for smaller screens */
+    padding-right: 10px;
+    padding-bottom: 150px; /* Adjust if bottom panels are smaller or hidden */
+  }
 
-    .org-chart-box {
-        width: 120px;
-        height: 45px;
-        font-size: 13px;
-        padding: 8px;
-    }
+  .org-chart-box {
+    width: 120px;
+    height: 45px;
+    font-size: 13px;
+    padding: 8px;
+  }
 
-    #isologo {
-        top: 10px;
-        left: 10px;
-        width: 250px; /* Further reduce base width for scaling */
-        transform: scale(0.2); /* Keep scale factor */
-    }
+  body:not(.portrait-orientation) #isologo {
+    top: 10px;
+    left: 10px;
+    width: 250px; /* Further reduce base width for scaling */
+    transform: scale(0.2); /* Keep scale factor */
+  }
 
-    #controls {
-        top: 10px;
-        right: 10px;
-        padding: 5px;
-        border-radius: 8px;
-    }
+  body:not(.portrait-orientation) #controls {
+    top: 10px;
+    right: 10px;
+    padding: 5px;
+    border-radius: 8px;
+  }
 
-    #controls button {
-        width: 35px; /* Consistent size for buttons */
-        height: 35px;
-        padding: 0; /* No padding on buttons with icons */
-        font-size: 14px; /* Default for text, but icons are primary */
-        margin-left: 5px;
-    }
+  body:not(.portrait-orientation) #controls button {
+    width: 35px; /* Consistent size for buttons */
+    height: 35px;
+    padding: 0; /* No padding on buttons with icons */
+    font-size: 14px; /* Default for text, but icons are primary */
+    margin-left: 5px;
+  }
 
-    /* Icon sizes within smaller buttons */
-    .button-icon {
-        width: 18px; /* Tinier as requested */
-        height: 18px;
-    }
+  body:not(.portrait-orientation) #controls button:first-child {
+    margin-left: 0;
+  }
 
-    #modeToggle {
-        width: 35px;
-        height: 35px;
-        margin-right: 5px; /* Adjust margin */
-    }
+  /* Icon sizes within smaller buttons */
+  body:not(.portrait-orientation) .button-icon {
+    width: 18px; /* Tinier as requested */
+    height: 18px;
+  }
 
-    .mode-icon {
-        width: 20px;
-        height: 20px;
-    }
+  body:not(.portrait-orientation) #modeToggle {
+    width: 35px;
+    height: 35px;
+    margin-right: 5px; /* Adjust margin */
+  }
 
-    #shortcutMap,
-    #caution,
-    #caution2 { /* Include new caution2 div in responsive hiding */
-        right: 10px;
-        width: 250px;
-        padding: 10px;
-        font-size: 13px;
-    }
+  body:not(.portrait-orientation) .mode-icon {
+    width: 20px;
+    height: 20px;
+  }
 
-    #shortcutMap h3,
-    #caution h3,
-    #caution2 h3 { /* Apply to all headings in these divs */
-        font-size: 15px;
-    }
+  body:not(.portrait-orientation) #shortcutMap,
+  body:not(.portrait-orientation) #caution,
+  body:not(.portrait-orientation) #caution2 {
+    /* Include new caution2 div in responsive hiding */
+    right: 10px;
+    width: 250px;
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  body:not(.portrait-orientation) #shortcutMap h3,
+  body:not(.portrait-orientation) #caution h3,
+  body:not(.portrait-orientation) #caution2 h3 {
+    /* Apply to all headings in these divs */
+    font-size: 15px;
+  }
 }
 
-/* Hide shortcut map and caution on smaller screens (mobile) */
+/* Hide shortcut map and caution on smaller screens (mobile)
+   This rule will still apply unless overridden by .portrait-orientation */
 @media (max-width: 600px) {
-    #shortcutMap,
-    #caution,
-    #caution2 { /* All three hidden */
-        display: none;
-    }
+  body:not(.portrait-orientation) #shortcutMap,
+  body:not(.portrait-orientation) #caution,
+  body:not(.portrait-orientation) #caution2 {
+    /* All three hidden */
+    display: none;
+  }
 
-    body {
-        padding-bottom: 20px;
-    }
+  body:not(.portrait-orientation) {
+    padding-bottom: 20px;
+  }
 }
 
-/* For very small screens (e.g., mobile phones) */
+/* For very small screens (e.g., mobile phones)
+   This will mostly apply to landscape mobile phones now, as portrait is handled by .portrait-orientation */
 @media (max-width: 480px) {
-    body {
-        padding-top: 10px;
-        padding-left: 10px;
-        padding-right: 5px;
-        padding-bottom: 100px;
-    }
+  body:not(.portrait-orientation) {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-bottom: 100px;
+  }
 
-    .org-chart-box {
-        width: 100px;
-        height: 40px;
-        font-size: 12px;
-        padding: 6px;
-    }
+  body:not(.portrait-orientation) .org-chart-box {
+    width: 100px;
+    height: 40px;
+    font-size: 12px;
+    padding: 6px;
+  }
 
-    #isologo {
-        top: 5px;
-        left: 5px;
-        width: 200px; /* Further reduce base width for scaling */
-        transform: scale(0.2);
-    }
+  body:not(.portrait-orientation) #isologo {
+    top: 5px;
+    left: 5px;
+    width: 200px; /* Further reduce base width for scaling */
+    transform: scale(0.2);
+  }
 
-    #controls {
-        flex-direction: column;
-        align-items: flex-end;
-        padding: 5px 10px;
-        width: auto;
-        min-height: auto;
-        top: 5px;
-        right: 5px;
-    }
+  body:not(.portrait-orientation) #controls {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: flex-end; /* Align them to the right within the column */
+    padding: 5px 10px;
+    width: auto;
+    min-height: auto;
+    top: 5px;
+    right: 5px;
+  }
 
-    #controls button {
-        width: 100%;
-        height: 35px;
-        margin: 5px 0;
-        padding: 0;
-        font-size: 14px;
-    }
+  body:not(.portrait-orientation) #controls button {
+    width: 100%; /* Make buttons full width of the column */
+    height: 35px;
+    margin: 5px 0; /* Vertical margin */
+    padding: 0;
+    font-size: 14px;
+  }
 
-    .button-icon {
-        width: 20px;
-        height: 20px;
-    }
+  body:not(.portrait-orientation) .button-icon {
+    width: 20px;
+    height: 20px;
+  }
 
-    #modeToggle {
-        width: 100%;
-        height: 35px;
-        margin: 5px 0;
-    }
+  body:not(.portrait-orientation) #modeToggle {
+    width: 100%;
+    height: 35px;
+    margin: 5px 0;
+  }
 }
-/* Portrait mode styles - applied when body has .portrait-mode class */
